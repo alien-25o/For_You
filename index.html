@@ -21,6 +21,7 @@ body {
   color: white;
 }
 
+/* Screens */
 .screen {
   height: 100vh;
   width: 100%;
@@ -37,14 +38,24 @@ body {
   animation: fadeUp 0.6s ease;
 }
 
+/* Text sizes (slightly smaller for 2nd & 3rd screen) */
 h1 {
   font-size: 2.4rem;
   margin-bottom: 16px;
 }
 
+#main h1 {
+  font-size: 2.1rem;
+}
+
 p {
   font-size: 1.2rem;
   opacity: 0.95;
+}
+
+#main p,
+.celebrate p {
+  font-size: 1.05rem;
 }
 
 .tap {
@@ -53,13 +64,16 @@ p {
   opacity: 0.75;
 }
 
-/* Buttons */
+/* Buttons area */
 .buttons {
   position: relative;
   width: 100%;
   height: 60vh;
+  max-width: 420px;
+  margin: auto;
 }
 
+/* Buttons */
 button {
   padding: 18px 30px;
   font-size: 1.2rem;
@@ -79,6 +93,9 @@ button {
   background: rgba(255,255,255,0.3);
   color: white;
   position: absolute;
+  left: 50%;
+  top: 120px;
+  transform: translateX(-50%);
 }
 
 /* Toast */
@@ -114,11 +131,7 @@ button {
 }
 
 .celebrate h1 {
-  font-size: 2.8rem;
-}
-
-.celebrate p {
-  font-size: 1.2rem;
+  font-size: 2.4rem;
 }
 
 /* Animations */
@@ -162,12 +175,13 @@ button {
   </div>
 </div>
 
-<!-- CELEBRATION -->
+<!-- CELEBRATION SCREEN -->
 <div class="celebrate" id="celebrate">
   <h1>Yayyy! Let’s gooo 🎉💘</h1>
   <p>
-    I knew it aap mujhe reject kar hi nhi skte 😅😁<br>
-    
+    I knew it 😅<br>
+    aap mujhe reject kar hi nahi sakte 😁
+  </p>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -176,7 +190,7 @@ button {
 let current = 0;
 const screens = document.querySelectorAll('.screen');
 
-document.body.addEventListener('click', (e) => {
+document.body.addEventListener('click', () => {
   if (screens[current] && screens[current].id === 'intro') {
     screens[current].classList.remove('active');
     current++;
@@ -198,19 +212,23 @@ const messages = [
   "are you testing me? 😏"
 ];
 
+/* FIXED NO BUTTON MOVEMENT */
 noBtn.addEventListener('click', (e) => {
   e.stopPropagation();
 
-  const maxX = window.innerWidth - noBtn.offsetWidth - 20;
-  const maxY = window.innerHeight - noBtn.offsetHeight - 120;
+  const container = document.querySelector('.buttons');
+
+  const maxX = container.clientWidth - noBtn.offsetWidth;
+  const maxY = container.clientHeight - noBtn.offsetHeight;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
 
   noBtn.style.left = x + 'px';
   noBtn.style.top = y + 'px';
+  noBtn.style.transform = 'none';
 
-  yesScale += 0.12;
+  yesScale += 0.1;
   yesBtn.style.transform = `scale(${yesScale})`;
 
   toast.innerText = messages[Math.floor(Math.random() * messages.length)];
@@ -225,6 +243,7 @@ yesBtn.addEventListener('click', (e) => {
   hearts();
 });
 
+/* Hearts animation */
 function hearts() {
   setInterval(() => {
     const h = document.createElement('div');

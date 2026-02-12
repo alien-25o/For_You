@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentine 💘</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'DM Sans', sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #ff6fae, #ff9a9e);
+  overflow: hidden;
+  color: white;
+}
+
+/* Screens */
+.screen {
+  height: 100vh;
+  width: 100%;
+  padding: 24px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+  animation: fadeUp 0.6s ease;
+}
+
+/* Text sizes (mobile friendly) */
+h1 {
+  font-size: 2.1rem;
+  margin-bottom: 14px;
+}
+
+#main h1 {
+  font-size: 1.9rem;
+}
+
+p {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.tap {
+  margin-top: 32px;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+/* Buttons */
+button {
+  padding: 16px 26px;
+  font-size: 1.1rem;
+  border-radius: 22px;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+/* YES button fixed bottom */
+#yesBtn {
+  background: white;
+  color: #ff3b7a;
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+/* NO button full screen mover */
+#noBtn {
+  background: rgba(255,255,255,0.3);
+  color: white;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.35);
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.toast.show {
+  bottom: 100px;
+  opacity: 1;
+}
+
+/* Celebration */
+.celebrate {
+  display: none;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.celebrate h1 {
+  font-size: 2.2rem;
+}
+
+.celebrate p {
+  font-size: 1rem;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hearts */
+.heart {
+  position: absolute;
+  bottom: -20px;
+  font-size: 20px;
+  animation: float 5s linear infinite;
+}
+
+@keyframes float {
+  from { transform: translateY(0); opacity: 0; }
+  20% { opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="intro">
+  <h1>Hey 👀</h1>
+  <p>I made this just for you 💖</p>
+  <div class="tap">tap to continue</div>
+</div>
+
+<!-- MAIN -->
+<div class="screen" id="main">
+  <h1>Will you be my Valentine? 💘</h1>
+  <button id="noBtn">NO 😢</button>
+  <button id="yesBtn">YES 💖</button>
+</div>
+
+<!-- CELEBRATION -->
+<div class="celebrate" id="celebrate">
+  <h1>Yayyy! Let’s gooo 🎉💘</h1>
+  <p>
+    I knew it 😅<br>
+    aap mujhe reject kar hi nahi sakte 😁
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let current = 0;
+const screens = document.querySelectorAll('.screen');
+
+document.body.addEventListener('click', () => {
+  if (screens[current]?.id === 'intro') {
+    screens[current].classList.remove('active');
+    screens[++current].classList.add('active');
+  }
+});
+
+const noBtn = document.getElementById('noBtn');
+const yesBtn = document.getElementById('yesBtn');
+const toast = document.getElementById('toast');
+
+let yesScale = 1;
+
+const messages = [
+  "nice try 😏",
+  "almost had me 👀",
+  "nope nope nope 😂",
+  "destiny says NO 😌",
+  "again? really? 🤭"
+];
+
+/* FULL SCREEN NO BUTTON MOVEMENT */
+noBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+
+  const padding = 20;
+
+  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  noBtn.style.left = x + 'px';
+  noBtn.style.top = y + 'px';
+  noBtn.style.transform = 'none';
+
+  yesScale += 0.1;
+  yesBtn.style.transform = `translateX(-50%) scale(${yesScale})`;
+
+  toast.innerText = messages[Math.floor(Math.random() * messages.length)];
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 900);
+});
+
+yesBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('celebrate').style.display = 'flex';
+  hearts();
+});
+
+/* Hearts */
+function hearts() {
+  setInterval(() => {
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.innerText = '💖';
+    h.style.left = Math.random() * 100 + 'vw';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 5000);
+  }, 250);
+}
+</script>
+
+</body>
+</html>

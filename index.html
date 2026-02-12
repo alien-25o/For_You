@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💘</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'DM Sans',sans-serif;
+}
+
+body{
+  min-height:100svh;
+  background:linear-gradient(180deg,#ff6fae,#ff9a9e);
+  overflow:hidden;
+  color:white;
+  transition:background .4s ease;
+}
+
+/* SCREENS */
+.screen{
+  min-height:100svh;
+  padding:24px;
+  display:none;
+  flex-direction:column;
+}
+.screen.active{display:flex}
+
+/* INTRO */
+#intro{
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+/* MAIN */
+#main{
+  justify-content:flex-start;
+}
+
+/* TOP ZONE */
+.top-zone{
+  margin-top:40px;
+  text-align:center;
+}
+
+.top-zone h1{
+  font-size:1.8rem;
+  margin-bottom:16px;
+}
+
+/* MAIN YES */
+.yes-btn{
+  padding:14px 30px;
+  font-size:1.1rem;
+  border-radius:30px;
+  border:none;
+  font-weight:900;
+  background:white;
+  color:#ff3b7a;
+  transition:.25s;
+}
+
+/* BOTTOM ZONE */
+.bottom-zone{
+  flex:1;
+  margin-top:40px;
+  position:relative;
+  border-top:1px dashed rgba(255,255,255,.4);
+  padding-top:30px;
+}
+
+/* NO BUTTON */
+#noBtn{
+  position:absolute;
+  left:50%;
+  top:30%;
+  transform:translateX(-50%);
+  padding:14px 26px;
+  font-size:1.05rem;
+  border-radius:30px;
+  border:none;
+  font-weight:800;
+  background:rgba(255,255,255,.35);
+  color:white;
+  z-index:5;
+}
+
+/* EXTRA YES (BOTTOM) */
+.bottom-yes{
+  position:absolute;
+  padding:12px 22px;
+  font-size:.95rem;
+  border-radius:24px;
+  border:none;
+  font-weight:800;
+  background:white;
+  color:#ff3b7a;
+  animation:pop .25s ease;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.35);
+  padding:12px 20px;
+  border-radius:50px;
+  font-size:.85rem;
+  opacity:0;
+  transition:.3s;
+}
+.toast.show{opacity:1}
+
+/* CELEBRATE */
+#celebrate{
+  display:none;
+  min-height:100svh;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  flex-direction:column;
+}
+
+/* ANIMATIONS */
+@keyframes pop{
+  from{transform:scale(.6);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="intro">
+  <h1>Hey 👀</h1>
+  <p>I made this just for you 💖</p>
+  <p style="margin-top:20px;opacity:.7">tap to continue</p>
+</div>
+
+<!-- MAIN -->
+<div class="screen" id="main">
+
+  <!-- TOP -->
+  <div class="top-zone">
+    <h1>Will you be my Valentine? 💘</h1>
+    <button class="yes-btn" id="yesBtn">YES 💖</button>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-zone" id="bottomZone">
+    <button id="noBtn">NO 😢</button>
+  </div>
+
+</div>
+
+<!-- CELEBRATE -->
+<div id="celebrate">
+  <h1>Yayyy Let's Gooo🎉💘</h1>
+  <p>Mujhe pta tha aap haa bol hi doge 😁😁</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* SCREEN SWITCH */
+const screens=document.querySelectorAll('.screen');
+let current=0;
+document.getElementById('intro').onclick=()=>{
+  screens[current].classList.remove('active');
+  screens[++current].classList.add('active');
+};
+
+/* ELEMENTS */
+const noBtn=document.getElementById('noBtn');
+const yesBtn=document.getElementById('yesBtn');
+const bottomZone=document.getElementById('bottomZone');
+const toast=document.getElementById('toast');
+
+/* SOUND */
+const ctx=new (window.AudioContext||window.webkitAudioContext)();
+function playSound(freq){
+  const o=ctx.createOscillator();
+  const g=ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.frequency.value=freq;
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+.25);
+  o.stop(ctx.currentTime+.25);
+}
+
+/* DATA */
+let scale=1;
+const MAX_SCALE=1.6;
+
+const messages=[
+  "neeche YES bhi aa gaye 😏",
+  "bas ek YES dabao 💖",
+  "bhagne ka koi fayda nahi 😈",
+  "surrounded 😂",
+  "ab to YES hi option hai 🤭"
+];
+
+const gradients=[
+  "linear-gradient(180deg,#ff6fae,#ff9a9e)",
+  "linear-gradient(180deg,#ff758c,#ff7eb3)",
+  "linear-gradient(180deg,#f857a6,#ff5858)",
+  "linear-gradient(180deg,#fc5c7d,#6a82fb)",
+  "linear-gradient(180deg,#f953c6,#b91d73)",
+  "linear-gradient(180deg,#ff4e50,#f9d423)"
+];
+
+/* NO CLICK */
+noBtn.onclick=(e)=>{
+  e.stopPropagation();
+  playSound(700);
+
+  /* BG CHANGE */
+  document.body.style.background=
+    gradients[Math.floor(Math.random()*gradients.length)];
+
+  /* MOVE NO (BOTTOM ONLY) */
+  const rect=bottomZone.getBoundingClientRect();
+  const maxX=rect.width-noBtn.offsetWidth-20;
+  const maxY=rect.height-noBtn.offsetHeight-20;
+
+  noBtn.style.left=Math.random()*maxX+"px";
+  noBtn.style.top=Math.random()*maxY+"px";
+  noBtn.style.transform="none";
+
+  /* YES LOGIC */
+  if(scale<MAX_SCALE){
+    scale+=0.08;
+    yesBtn.style.transform=`scale(${scale})`;
+  }else{
+    const extra=document.createElement("button");
+    extra.className="bottom-yes";
+    extra.innerText="YES 💖";
+
+    extra.style.left=Math.random()*(rect.width-120)+"px";
+    extra.style.top=Math.random()*(rect.height-50)+"px";
+
+    extra.onclick=yesBtn.onclick;
+    bottomZone.appendChild(extra);
+  }
+
+  toast.innerText=messages[Math.floor(Math.random()*messages.length)];
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),900);
+};
+
+/* YES CLICK */
+yesBtn.onclick=(e)=>{
+  e.stopPropagation();
+  playSound(300);
+  document.getElementById('main').style.display="none";
+  document.getElementById('celebrate').style.display="flex";
+};
+</script>
+
+</body>
+</html>
